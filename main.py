@@ -16,6 +16,7 @@ sys.path.append(str(pathlib.Path(__file__).parent.parent.parent))
 print("PATH=" + str(pathlib.Path(__file__).parent.parent.parent)) # 打印路径
 
 show_animation = True
+plt_show_flag = True
 k = 0.5  # 控制增益
 Kp = 1.0  # 速度比例增益
 dt = 0.1  # [s] 时间差
@@ -132,6 +133,18 @@ def main():
 
     rx, ry = [], []
     a_star_flag = False
+    Stanley_flag = False
+    
+    name = ""
+    if(a_star_flag):
+        name = "a_star"
+    else:
+        name = "dijkstra"
+    if(Stanley_flag):
+        name = name + "_stanley"
+    else:
+        name = name + "_pure_pursuit"
+
     if(not a_star_flag):
         dijkstra = Dijkstra(ox, oy, grid_size, robot_radius)
         rx, ry = dijkstra.planning(sx, sy, gx, gy)
@@ -194,7 +207,7 @@ def main():
                 plt.axis("equal")
                 plt.grid(True)
                 plt.title("Speed[km/h]:" + str(state.v * 3.6)[:4])
-                plt.pause(0.001)
+                # plt.pause(0.001)
 
         # 测试
         assert last_idx >= target_idx, "无法到达目标点"
@@ -213,12 +226,15 @@ def main():
             plt.axis("equal")
             plt.grid(True)
 
+            plt.savefig(name+"1.png", dpi=900)
             plt.subplots(1)
             plt.plot(t, [iv * 3.6 for iv in v], "-r")
             plt.xlabel("Time[s]")
             plt.ylabel("Speed[km/h]")
             plt.grid(True)
-            plt.show()
+            if(plt_show_flag):
+                plt.savefig(name+".png", dpi=900)
+                plt.show()
 
     def pure_pursuit_main():
         #  target course
@@ -256,7 +272,7 @@ def main():
                 plt.axis("equal")
                 plt.grid(True)
                 plt.title("Speed[km/h]:" + str(state.v * 3.6)[:4])
-                plt.pause(0.001)
+                # plt.pause(0.001)
 
         # 测试
         assert last_idx >= target_ind, "无法到达目标点"
@@ -271,15 +287,20 @@ def main():
             plt.axis("equal")
             plt.grid(True)
 
+            plt.savefig(name+"1.png", dpi=900)
             plt.subplots(1)
             plt.plot(states.t, [iv * 3.6 for iv in states.v], "-r")
             plt.xlabel("Time[s]")
             plt.ylabel("Speed[km/h]")
             plt.grid(True)
-            plt.show()
+            if(plt_show_flag):
+                plt.savefig(name+"2.png", dpi=900)
+                plt.show()
 
-    Stanley_main()
-    # pure_pursuit_main() #
+    if(Stanley_flag):
+        Stanley_main()
+    else:
+        pure_pursuit_main() #
 
 if __name__ == '__main__':
     main()
